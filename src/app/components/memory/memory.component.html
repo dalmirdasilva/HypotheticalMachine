@@ -1,0 +1,28 @@
+<div appStandOut appDragPositionMemory cdkDrag cdkDragBoundary="#machine" id="memory" class="d-inline-flex draggable">
+  <div class="content d-block">
+    <div class="header d-flex" cdkDragHandle>
+      <mat-icon class="align-middle">memory</mat-icon>
+      <span class="align-middle ml-1">Memory</span>
+    </div>
+    <div class="body">
+      <table>
+        <thead>
+        <tr>
+          <th></th>
+          <th *ngFor="let x of squareArray">
+            {{x | base:16 | uppercase}}
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let x of squareArray; let i = index">
+          <td><b>{{x | base:16 | uppercase}}</b></td>
+          <td *ngFor="let _ of squareArray; let j = index">
+            {{memory.getBuffer()[i * squareArray.length + j] | base | pad}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

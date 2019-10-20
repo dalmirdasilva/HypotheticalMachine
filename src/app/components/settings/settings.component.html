@@ -1,0 +1,14 @@
+<div appStandOut appDragPositionMemory cdkDrag cdkDragBoundary="#machine" id="settings" class="d-inline-flex draggable">
+  <div class="content d-block">
+    <div class="header" cdkDragHandle>
+      <mat-icon class="align-middle">memory</mat-icon>
+      <span class="align-middle ml-1">Settings</span>
+    </div>
+    <div class="body">
+      <mat-button-toggle-group name="base" (change)="onBaseChange($event)" [value]="config.getBase()">
+        <mat-button-toggle *ngFor="let base of config.getBaseNames() | keyvalue"
+                           [value]="base.key">{{base.value}}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+</div>

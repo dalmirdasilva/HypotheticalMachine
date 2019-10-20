@@ -1,0 +1,18 @@
+<div appStandOut appDragPositionMemory cdkDrag cdkDragBoundary="#machine" id="stack" class="d-inline-flex draggable">
+  <div class="content d-block">
+    <div class="header" cdkDragHandle>
+      <mat-icon class="align-middle">memory</mat-icon>
+      <span class="align-middle ml-1">Stack</span>
+    </div>
+    <div class="body">
+      <table>
+        <tbody>
+        <tr *ngFor="let x of sizeArray.reverse(); let i = index">
+          <td><b>{{x | base:16 | uppercase}}</b></td>
+          <td>{{stack.getBuffer()[i] | base | pad}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

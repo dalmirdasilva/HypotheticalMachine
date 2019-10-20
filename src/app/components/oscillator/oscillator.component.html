@@ -1,0 +1,17 @@
+<div appStandOut appDragPositionMemory cdkDrag cdkDragBoundary="#machine" id="oscillator"
+     class="d-inline-flex draggable">
+  <div class="content d-block">
+    <div class="header" cdkDragHandle>
+      <mat-icon class="align-middle">memory</mat-icon>
+      <span class="align-middle ml-1">Oscillator</span>
+    </div>
+    <div class="body">
+      <div>
+        <span>Frequency: {{oscillator.getFrequency() | base | pad}} </span>
+      </div>
+      <div>
+        <mat-slider class="w-100" min="1" max="100" step="1" (input)="onFrequencyChange($event.value)"></mat-slider>
+      </div>
+    </div>
+  </div>
+</div>

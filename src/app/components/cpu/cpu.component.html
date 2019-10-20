@@ -1,0 +1,22 @@
+<div appStandOut appDragPositionMemory cdkDrag cdkDragBoundary="#machine" id="cpu" class="draggable">
+  <div class="content d-block">
+    <div class="header d-flex" cdkDragHandle>
+      <mat-icon class="align-middle">memory</mat-icon>
+      <span class="align-middle ml-1">CPU</span>
+    </div>
+    <div class="body">
+      <div>
+        <span>AC: {{cpu.getAc() | base | pad}} &nbsp;</span>
+        <span>PC: {{cpu.getPc() | base | pad}} &nbsp;</span>
+        <span>N: {{cpu.getFlags().n ? '1' : '0'}} &nbsp;</span>
+        <span>Z: {{cpu.getFlags().z ? '1' : '0'}} &nbsp;</span>
+      </div>
+      <div>
+        <button (click)="togglePower()">Power is {{cpu.isPowered() ? '1' : '0'}}</button>
+        <button (click)="toggleSleep()">Sleep is {{cpu.isSleeping() ? '1' : '0'}}</button>
+        <button (click)="reset()">Reset</button>
+        <button (click)="interrupt()">Interrupt</button>
+      </div>
+    </div>
+  </div>
+</div>
