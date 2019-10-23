@@ -46,3 +46,24 @@ body {
     0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
 }
+
+.entry {
+  padding: 4px 8px;
+  border: 1px solid #eee;
+  text-align: center;
+
+  &.head {
+    background-color: #eee;
+    border: 1px solid #fff;
+    color: #888;
+
+    &.head-v {
+      padding: 4px 12px;
+    }
+  }
+
+  &.active {
+    background-color: #ffa821;
+    border-bottom: 1px solid #646464;
+  }
+}

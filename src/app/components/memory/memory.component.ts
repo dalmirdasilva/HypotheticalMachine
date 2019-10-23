@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Memory} from '../../machine/memory';
 import {Base, ConfigService} from '../../services/config.service';
+import {Cpu} from '../../machine/cpu';
 
 @Component({
   selector: 'app-memory',
@@ -9,20 +10,45 @@ import {Base, ConfigService} from '../../services/config.service';
 })
 export class MemoryComponent implements OnInit {
 
-  public readonly squareArray: Array<number>;
-  index: number;
-  constructor(private memory: Memory,
+  public readonly sqrtArray: Array<number>;
+
+  constructor(private cpu: Cpu,
+              private memory: Memory,
               private config: ConfigService) {
-    this.squareArray = Array.from(Array(Math.sqrt(memory.getSize())).keys());
+    this.sqrtArray = Array.from(Array(Math.sqrt(memory.getSize())).keys());
+
     config.getOnBaseChangeObservable().subscribe((newBase: Base) => {
     });
-    this.index = 1;
+
+
+    let a = 0;
+    memory.getBuffer()[a++] = 0x07;
+    memory.getBuffer()[a++] = 0x09;
+    memory.getBuffer()[a++] = 0x00;
+    memory.getBuffer()[a++] = 0x00;
+    memory.getBuffer()[a++] = 0x02;
+    memory.getBuffer()[a++] = 0xf2;
+    memory.getBuffer()[a++] = 0x01;
+    memory.getBuffer()[a++] = 0xfc;
+    memory.getBuffer()[a++] = 0x0e;
+    memory.getBuffer()[a++] = 0x02;
+    memory.getBuffer()[a++] = 0xfc;
+    memory.getBuffer()[a++] = 0x03;
+    memory.getBuffer()[a++] = 0xf0;
+    memory.getBuffer()[a++] = 0x01;
+    memory.getBuffer()[a++] = 0xfc;
+    memory.getBuffer()[a++] = 0x09;
+    memory.getBuffer()[a++] = 0x13;
+    memory.getBuffer()[a++] = 0x07;
+    memory.getBuffer()[a++] = 0x09;
+    memory.getBuffer()[a++] = 0xff;
+    memory.getBuffer()[0xf0] = 0x01;
   }
 
   ngOnInit() {
   }
 
-  onHandlerMouseDown() {
-    this.index++;
+  public addressAt(i: number, j: number): number {
+    return i * this.sqrtArray.length + j;
   }
 }

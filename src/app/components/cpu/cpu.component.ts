@@ -14,7 +14,7 @@ export class CpuComponent implements OnInit {
   ngOnInit() {
   }
 
-  togglePower() {
+  public togglePower(): void {
     if (this.cpu.isPowered()) {
       this.cpu.powerOff();
     } else {
@@ -22,7 +22,7 @@ export class CpuComponent implements OnInit {
     }
   }
 
-  toggleSleep() {
+  public toggleSleep(): void {
     if (this.cpu.isSleeping()) {
       this.cpu.awake();
     } else {
@@ -30,11 +30,11 @@ export class CpuComponent implements OnInit {
     }
   }
 
-  reset() {
+  public reset(): void {
     this.cpu.reset();
   }
 
-  interrupt() {
+  public interrupt(): void {
     this.cpu.interrupt();
   }
 }

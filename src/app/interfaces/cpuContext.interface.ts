@@ -9,7 +9,7 @@ export interface CpuContextFlags {
   n: boolean;
 }
 
-export function emptyContext(): CpuContextInterface {
+export function newCpuContext(): CpuContextInterface {
   return {
     pc: 0,
     ac: 0,

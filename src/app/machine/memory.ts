@@ -8,44 +8,25 @@ export const MEMORY_SIZE_TOKEN = new InjectionToken<number>('Memory size.');
 })
 export class Memory {
 
+  private static MEMORY_MASK = 0xff;
   private readonly access: MemoryAccessInterface;
   private buffer: Int8Array;
 
   public constructor(@Inject(MEMORY_SIZE_TOKEN) private size: number) {
     this.buffer = new Int8Array(size);
     this.access = {read: 0, write: 0};
-
-
-// 07
-// 09
-
-// 2	00// 3	00
-// 4	02	lda (f2)
-// 5	f2
-// 6	01	sta (fc)
-// 7	fc
-// 8	0e	reti
-// 9	02	lda (fc)
-// a	fc
-// b	03	add (f0)
-// c	f0
-// d	01	sta (fc)
-// e	fc
-// f	09	jz (13)
-// 10	13
-// 11	07	jmp (9)
-// 12	09
-// 13	ff
-
   }
 
   public read(address: number): number {
+    address &= Memory.MEMORY_MASK;
     this.checkBoundaries(address);
     this.access.read++;
     return this.buffer[address];
   }
 
   public write(address: number, value: number) {
+    address &= Memory.MEMORY_MASK;
+    value &= Memory.MEMORY_MASK;
     this.checkBoundaries(address);
     this.buffer[address] = value;
     this.access.write++;

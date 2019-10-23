@@ -8,8 +8,8 @@
       <table>
         <tbody>
         <tr *ngFor="let x of sizeArray.reverse(); let i = index">
-          <td><b>{{x | base:16 | uppercase}}</b></td>
-          <td>{{stack.getBuffer()[i] | base | pad}}</td>
+          <td class="entry head head-v"><b>{{x | base:16 | uppercase}}</b></td>
+          <td class="entry">{{stack.getBuffer()[i] | base | pad}}</td>
         </tr>
         </tbody>
       </table>

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {cloneCpuContext, CpuContextInterface, CpuContextFlags, emptyContext, resetCpuContext} from '../interfaces/cpuContext.interface';
+import {cloneCpuContext, CpuContextFlags, CpuContextInterface, newCpuContext, resetCpuContext} from '../interfaces/cpuContext.interface';
 import {Memory} from './memory';
 import {Stack} from './stack';
 import {Decoder} from './decoder';
@@ -22,6 +22,7 @@ export class Cpu {
   private readonly interruptVector: number;
   private interruptEnabled: boolean;
   private interrupted: boolean;
+  private insideInterrupt: boolean;
   private contextStack: Array<CpuContextInterface>;
 
   private tickSub: Subscription;
@@ -32,7 +33,7 @@ export class Cpu {
               private oscillator: Oscillator,
               private logger: LoggerService) {
     this.interruptEnabled = true;
-    this.context = emptyContext();
+    this.context = newCpuContext();
     this.interruptVector = Cpu.INTERRUPT_VECTOR_ADDRESS;
     this.sleeping = false;
     this.powered = false;
@@ -72,20 +73,20 @@ export class Cpu {
         this.executeInstruction(instruction);
       } catch (e) {
         this.sleep();
-        this.logger.error(e);
+        console.log(e);
       }
     }
   }
 
   public returnFromInterrupt(): void {
     this.restoreContext();
+    this.clearInsideInterrupt();
     this.clearInterrupted();
-    this.enableInterrupt();
   }
 
   public checkInterrupt(): void {
-    if (this.wasInterrupted()) {
-      this.disableInterrupt();
+    if (this.isInterrupted()) {
+      this.setInsideInterrupt();
       this.saveContext();
       this.setPc(this.interruptVector);
     }
@@ -102,24 +103,22 @@ export class Cpu {
     }
   }
 
-  public wasInterrupted(): boolean {
-    return this.interruptEnabled && this.interrupted;
+  public isInterrupted(): boolean {
+    return this.interruptEnabled && this.interrupted && !this.insideInterrupt;
   }
 
   public interrupt(): void {
-    if (this.interruptEnabled) {
-      this.interrupted = true;
-    }
+    this.setInterrupted();
   }
 
   public powerOn(): void {
-    this.powered = true;
-    this.enableOscillator();
+    this.setPowered();
+    this.subscribeOscillator();
   }
 
   public powerOff(): void {
-    this.disableOscillator();
-    this.powered = false;
+    this.unsubscribeOscillator();
+    this.clearPowered();
     this.reset(false);
     this.memory.resetAccess();
   }
@@ -129,13 +128,13 @@ export class Cpu {
   }
 
   public sleep(): void {
-    this.disableOscillator();
+    this.unsubscribeOscillator();
     this.sleeping = true;
   }
 
   public awake() {
     this.sleeping = false;
-    this.enableOscillator();
+    this.subscribeOscillator();
   }
 
   public isSleeping(): boolean {
@@ -144,6 +143,8 @@ export class Cpu {
 
   public reset(eraseMemory: boolean = false): void {
     resetCpuContext(this.context);
+    this.clearInterrupted();
+    this.clearInsideInterrupt();
     this.getStack().erase();
     if (eraseMemory) {
       this.getMemory().erase();
@@ -168,7 +169,7 @@ export class Cpu {
 
   public setOscillator(oscillator: Oscillator): void {
     this.oscillator = oscillator;
-    this.enableOscillator();
+    this.subscribeOscillator();
   }
 
   public getOscillator(): Oscillator {
@@ -229,19 +230,39 @@ export class Cpu {
     this.checkInterrupt();
   }
 
-  private disableOscillator(): void {
+  private unsubscribeOscillator(): void {
     if (this.tickSub) {
       this.tickSub.unsubscribe();
     }
   }
 
-  private enableOscillator(): void {
-    this.disableOscillator();
+  private subscribeOscillator(): void {
+    this.unsubscribeOscillator();
     if (this.isRunning() && this.oscillator) {
-      this.tickSub = this.oscillator.asObservable().subscribe(() => {
+      this.tickSub = this.oscillator.asObservable().subscribe((_: number) => {
         this.tick();
       });
     }
+  }
+
+  private setPowered(): void {
+    this.powered = true;
+  }
+
+  private clearPowered(): void {
+    this.powered = false;
+  }
+
+  private setInsideInterrupt(): void {
+    this.insideInterrupt = true;
+  }
+
+  private clearInsideInterrupt(): void {
+    this.insideInterrupt = false;
+  }
+
+  private setInterrupted(): void {
+    this.interrupted = true;
   }
 
   private clearInterrupted(): void {

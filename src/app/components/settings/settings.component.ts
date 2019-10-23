@@ -15,7 +15,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
-  public onBaseChange(event: MatButtonToggleChange) {
+  public onBaseChange(event: MatButtonToggleChange): void {
     this.config.setBase(event.value);
   }
 }

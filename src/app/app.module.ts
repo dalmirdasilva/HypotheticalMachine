@@ -12,7 +12,7 @@ import {MEMORY_SIZE_TOKEN} from './machine/memory';
 import {MachineComponent} from './components/machine/machine.component';
 import {OSCILLATOR_FREQUENCY_TOKEN} from './machine/oscillator';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonToggleModule, MatIconModule, MatSelectModule, MatSliderModule, MatTableModule} from '@angular/material';
+import {MatButtonModule, MatButtonToggleModule, MatIconModule, MatSelectModule, MatSliderModule, MatTableModule} from '@angular/material';
 import {CdkTableModule} from '@angular/cdk/table';
 import {BasePipe} from './pipes/base.pipe';
 import {DEFAULT_BASE_TOKEN} from './services/config.service';
@@ -46,7 +46,8 @@ import {DragPositionMemoryDirective} from './directives/drag-position-memory.dir
     MatSelectModule,
     MatButtonToggleModule,
     DragDropModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     {provide: STACK_SIZE_TOKEN, useValue: 16},

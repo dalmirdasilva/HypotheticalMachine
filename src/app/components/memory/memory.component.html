@@ -9,20 +9,22 @@
         <thead>
         <tr>
           <th></th>
-          <th *ngFor="let x of squareArray">
+          <th *ngFor="let x of sqrtArray" class="entry head">
             {{x | base:16 | uppercase}}
           </th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let x of squareArray; let i = index">
-          <td><b>{{x | base:16 | uppercase}}</b></td>
-          <td *ngFor="let _ of squareArray; let j = index">
-            {{memory.getBuffer()[i * squareArray.length + j] | base | pad}}
+        <tr *ngFor="let x of sqrtArray; let i = index">
+          <td class="entry head head-v"><b>{{x | base:16 | uppercase}}</b></td>
+          <td *ngFor="let _ of sqrtArray; let j = index" [ngClass]="{active: cpu.getPc() === addressAt(i, j)}"
+              class="entry">
+            {{memory.getBuffer()[addressAt(i, j)] | base | pad}}
           </td>
         </tr>
         </tbody>
       </table>
+      <div class="mt-2 text-right">Read: {{memory.getAccess().read}} | Write: {{memory.getAccess().write}}</div>
     </div>
   </div>
 </div>

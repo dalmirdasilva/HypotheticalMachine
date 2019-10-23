@@ -12,6 +12,15 @@
       <div>
         <mat-slider class="w-100" min="1" max="100" step="1" (input)="onFrequencyChange($event.value)"></mat-slider>
       </div>
+      <div>
+        <mat-button-toggle-group appearance="legacy" (change)="onPowerChange($event)" [value]="state">
+          <mat-button-toggle [value]="PowerState.ON">On</mat-button-toggle>
+          <mat-button-toggle [value]="PowerState.OFF">Off</mat-button-toggle>
+        </mat-button-toggle-group>
+        <button [disabled]="state === PowerState.ON" class="ml-2" mat-raised-button (click)="onPulseClick($event)">
+          Pulse
+        </button>
+      </div>
     </div>
   </div>
 </div>

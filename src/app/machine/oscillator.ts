@@ -1,5 +1,5 @@
 import {Inject, Injectable, InjectionToken} from '@angular/core';
-import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
+import {interval, Observable, Subject} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 
 export const OSCILLATOR_FREQUENCY_TOKEN = new InjectionToken<number>('Oscillator frequency.');
@@ -9,24 +9,33 @@ export const OSCILLATOR_FREQUENCY_TOKEN = new InjectionToken<number>('Oscillator
 })
 export class Oscillator {
 
-  private readonly observable: Observable<number>;
-  private readonly startSubject: BehaviorSubject<number>;
+  private static SECOND = 1000;
+
+  private readonly startSubject: Subject<void>;
   private readonly stopSubject: Subject<void>;
+  private readonly tickSubject: Subject<number>;
 
   constructor(@Inject(OSCILLATOR_FREQUENCY_TOKEN) private frequency: number) {
-    this.startSubject = new BehaviorSubject<number>(0);
+    this.startSubject = new Subject<void>();
     this.stopSubject = new Subject<void>();
-    this.observable = this.startSubject.pipe(
-      switchMap<number, Observable<number>>(() => interval(this.getInterval()).pipe(
+    this.tickSubject = new Subject<number>();
+
+    this.startSubject.pipe(
+      switchMap<void, Observable<number>>(() => interval(this.getInterval()).pipe(
         takeUntil(this.stopSubject)
       ))
-    );
+    ).subscribe((n: number) => {
+      this.tickSubject.next(n);
+    });
+
     this.start();
   }
 
-  public setFrequency(frequency: number) {
+  public setFrequency(frequency: number, restart: boolean = false) {
     this.frequency = frequency;
-    this.start();
+    if (restart) {
+      this.start();
+    }
   }
 
   public getFrequency(): number {
@@ -37,11 +46,15 @@ export class Oscillator {
   }
 
   public getInterval(): number {
-    return 1000 / this.getFrequency();
+    return Oscillator.SECOND / this.getFrequency();
+  }
+
+  public pulse(): void {
+    this.tickSubject.next(0);
   }
 
   public start(): void {
-    this.startSubject.next(0);
+    this.startSubject.next();
   }
 
   public stop(): void {
@@ -49,6 +62,6 @@ export class Oscillator {
   }
 
   public asObservable(): Observable<number> {
-    return this.observable;
+    return this.tickSubject.asObservable();
   }
 }
